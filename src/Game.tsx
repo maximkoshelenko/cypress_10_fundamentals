@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import moment from 'moment';
-import { Header } from './components/layout/Header';
-import { GameSection } from './components/layout/GameSection';
-import { StatusSection } from './components/layout/StatusSection';
-import { Footer } from './components/layout/Footer';
-import { getUniqueSudoku } from './solver/UniqueSudoku';
-import { useSudokuContext } from './context/SudokuContext';
+import React, { useState, useEffect } from "react";
+import moment from "moment";
+import { Header } from "./components/layout/Header";
+import { GameSection } from "./components/layout/GameSection";
+import { StatusSection } from "./components/layout/StatusSection";
+import { Footer } from "./components/layout/Footer";
+import { getUniqueSudoku } from "./solver/UniqueSudoku";
+import { useSudokuContext } from "./context/SudokuContext";
 
 /**
  * Game is the main React component.
@@ -26,29 +26,46 @@ export const Game: React.FC<{}> = () => {
    * overlay: Is the 'Game Solved' overlay enabled?
    * won: Is the game 'won'?
    */
-  let { numberSelected, setNumberSelected,
-        gameArray, setGameArray,
-        difficulty, setDifficulty,
-        setTimeGameStarted,
-        fastMode, setFastMode,
-        cellSelected, setCellSelected,
-        initArray, setInitArray,
-        setWon } = useSudokuContext();
-  let [ mistakesMode, setMistakesMode ] = useState<boolean>(false);
-  let [ history, setHistory ] = useState<string[][]>([]);
-  let [ solvedArray, setSolvedArray ] = useState<string[]>([]);
-  let [ overlay, setOverlay ] = useState<boolean>(false);
+  let {
+    numberSelected,
+    setNumberSelected,
+    gameArray,
+    setGameArray,
+    difficulty,
+    setDifficulty,
+    setTimeGameStarted,
+    fastMode,
+    setFastMode,
+    cellSelected,
+    setCellSelected,
+    initArray,
+    setInitArray,
+    setWon,
+  } = useSudokuContext();
+  let [mistakesMode, setMistakesMode] = useState<boolean>(false);
+  let [history, setHistory] = useState<string[][]>([]);
+  let [solvedArray, setSolvedArray] = useState<string[]>([]);
+  let [overlay, setOverlay] = useState<boolean>(false);
+
+  // Extend the Window interface with custom properties
+  interface CustomWindow extends Window {
+    starting?: any; // Replace 'any' with the actual type of starting if known
+    solved?: any; // Replace 'any' with the actual type of solved if known
+  }
 
   /**
    * Creates a new game and initializes the state variables.
    */
   function _createNewGame(e?: React.ChangeEvent<HTMLSelectElement>) {
-    let [ temporaryInitArray, temporarySolvedArray ] = getUniqueSudoku(difficulty, e);
+    let [temporaryInitArray, temporarySolvedArray] =
+      (window as CustomWindow).starting && (window as CustomWindow).solved
+        ? [(window as CustomWindow).starting, (window as CustomWindow).solved]
+        : getUniqueSudoku(difficulty, e);
 
     setInitArray(temporaryInitArray);
     setGameArray(temporaryInitArray);
     setSolvedArray(temporarySolvedArray);
-    setNumberSelected('0');
+    setNumberSelected("0");
     setTimeGameStarted(moment());
     setCellSelected(-1);
     setHistory([]);
@@ -59,12 +76,12 @@ export const Game: React.FC<{}> = () => {
    * Checks if the game is solved.
    */
   function _isSolved(index: number, value: string) {
-    if (gameArray.every((cell: string, cellIndex: number) => {
-          if (cellIndex === index)
-            return value === solvedArray[cellIndex];
-          else
-            return cell === solvedArray[cellIndex];
-        })) {
+    if (
+      gameArray.every((cell: string, cellIndex: number) => {
+        if (cellIndex === index) return value === solvedArray[cellIndex];
+        else return cell === solvedArray[cellIndex];
+      })
+    ) {
       return true;
     }
     return false;
@@ -75,7 +92,7 @@ export const Game: React.FC<{}> = () => {
    * Used to Fill / Erase as required.
    */
   function _fillCell(index: number, value: string) {
-    if (initArray[index] === '0') {
+    if (initArray[index] === "0") {
       // Direct copy results in interesting set of problems, investigate more!
       let tempArray = gameArray.slice();
       let tempHistory = history.slice();
@@ -102,8 +119,7 @@ export const Game: React.FC<{}> = () => {
     if (mistakesMode) {
       if (value === solvedArray[index]) {
         _fillCell(index, value);
-      }
-      else {
+      } else {
         // TODO: Flash - Mistakes not allowed in Mistakes Mode
       }
     } else {
@@ -123,7 +139,7 @@ export const Game: React.FC<{}> = () => {
    * On Click of a Game cell.
    */
   function onClickCell(indexOfArray: number) {
-    if (fastMode && numberSelected !== '0') {
+    if (fastMode && numberSelected !== "0") {
       _userFillCell(indexOfArray, numberSelected);
     }
     setCellSelected(indexOfArray);
@@ -145,9 +161,9 @@ export const Game: React.FC<{}> = () => {
    */
   function onClickNumber(number: string) {
     if (fastMode) {
-      setNumberSelected(number)
+      setNumberSelected(number);
     } else if (cellSelected !== -1) {
-      _userFillCell(cellSelected,number);
+      _userFillCell(cellSelected, number);
     }
   }
 
@@ -156,12 +172,11 @@ export const Game: React.FC<{}> = () => {
    * try to Undo the latest change.
    */
   function onClickUndo() {
-    if(history.length) {
+    if (history.length) {
       let tempHistory = history.slice();
       let tempArray = tempHistory.pop();
       setHistory(tempHistory);
-      if (tempArray !== undefined)
-        setGameArray(tempArray);
+      if (tempArray !== undefined) setGameArray(tempArray);
     }
   }
 
@@ -170,8 +185,8 @@ export const Game: React.FC<{}> = () => {
    * try to delete the cell.
    */
   function onClickErase() {
-    if(cellSelected !== -1 && gameArray[cellSelected] !== '0') {
-      _fillCell(cellSelected, '0');
+    if (cellSelected !== -1 && gameArray[cellSelected] !== "0") {
+      _fillCell(cellSelected, "0");
     }
   }
 
@@ -188,7 +203,7 @@ export const Game: React.FC<{}> = () => {
   /**
    * Toggle Mistakes Mode
    */
-  function  onClickMistakesMode() {
+  function onClickMistakesMode() {
     setMistakesMode(!mistakesMode);
   }
 
@@ -197,7 +212,7 @@ export const Game: React.FC<{}> = () => {
    */
   function onClickFastMode() {
     if (fastMode) {
-      setNumberSelected('0');
+      setNumberSelected("0");
     }
     setCellSelected(-1);
     setFastMode(!fastMode);
@@ -216,20 +231,22 @@ export const Game: React.FC<{}> = () => {
    */
   useEffect(() => {
     _createNewGame();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <>
-      <div className={overlay?"container blur":"container"}>
-        <Header onClick={onClickNewGame}/>
+      <div className={overlay ? "container blur" : "container"}>
+        <Header onClick={onClickNewGame} />
         <div className="innercontainer">
           <GameSection
             onClick={(indexOfArray: number) => onClickCell(indexOfArray)}
           />
           <StatusSection
             onClickNumber={(number: string) => onClickNumber(number)}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onChangeDifficulty(e)}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              onChangeDifficulty(e)
+            }
             onClickUndo={onClickUndo}
             onClickErase={onClickErase}
             onClickHint={onClickHint}
@@ -239,16 +256,15 @@ export const Game: React.FC<{}> = () => {
         </div>
         <Footer />
       </div>
-      <div className= { overlay
-                        ? "overlay overlay--visible"
-                        : "overlay"
-                      }
-           onClick={onClickOverlay}
+      <div
+        className={overlay ? "overlay overlay--visible" : "overlay"}
+        onClick={onClickOverlay}
       >
         <h2 className="overlay__text">
-          You <span className="overlay__textspan1">solved</span> <span className="overlay__textspan2">it!</span>
+          You <span className="overlay__textspan1">solved</span>{" "}
+          <span className="overlay__textspan2">it!</span>
         </h2>
       </div>
     </>
   );
-}
+};
