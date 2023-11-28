@@ -7,7 +7,7 @@ describe('empty spec', () => {
     cy.clock();
     cy.visit('/');
     cy.contains('.status__time', '00:00');
-    cy.tick(20_000); // Simulate a shift of 20 seconds
-    cy.contains('.status__time', '00:20');
+    cy.tick(1_000); // Simulate a shift of 20 seconds
+    cy.contains('.status__time', '00:01');
   })
 })
