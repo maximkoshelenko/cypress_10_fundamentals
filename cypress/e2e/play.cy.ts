@@ -8,13 +8,11 @@ interface CustomWindow extends Window {
 
 describe('Sudoku', () => {
   it('Play the same game', () => {
-
     cy.visit('/', {
       onBeforeLoad: (window) => {
         (window as CustomWindow).starting = starting;
         (window as CustomWindow).solved = solved;
       },
     })
-
   })
 })
