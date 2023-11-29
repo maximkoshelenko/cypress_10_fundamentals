@@ -2,7 +2,7 @@
   "name": "sudoku",
   "version": "1.0.0",
   "private": true,
-  "author": "Amith Raravi <amith.raravi@gmail.com>",
+  "author": "test project",
   "license": "MIT",
   "dependencies": {
     "@types/node": "^15.14.9",
