@@ -25,14 +25,6 @@ import { mount } from 'cypress/react18'
 // your custom command.
 // Alternatively, can be defined in cypress/support/component.d.ts
 // with a <reference path="./component" /> at the top of your spec.
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       mount: typeof mount
-//     }
-//   }
-// }
-
 declare global {
   namespace Cypress {
     interface Chainable {
@@ -41,13 +33,8 @@ declare global {
   }
 }
 
-// Cypress.Commands.add('mount', mount)
+Cypress.Commands.add('mount', mount)
 
-Cypress.Commands.add('mount', (component, options) => {
-  // Wrap any parent components needed
-  // ie: return mount(<MyProvider>{component}</MyProvider>, options)
-  return mount(component, options)
-})
 
 
 // Example use:
