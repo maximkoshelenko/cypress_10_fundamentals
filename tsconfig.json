@@ -17,8 +17,5 @@
     "allowSyntheticDefaultImports": true
   },
   // "types": ["cypress"],
-  "include": [
-    "src", 
-    "**/*.ts"
-  ]
+  "include": ["src", "**/*.ts", "cypress.d.ts"]
 }
